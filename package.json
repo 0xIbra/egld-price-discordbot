@@ -1,0 +1,30 @@
+{
+  "name": "egld-price-discordbot",
+  "version": "1.0.0",
+  "description": "Discord bot that displays the price of EGLD.",
+  "main": "src/bot.js",
+  "scripts": {
+    "test": "npx ts-node --esm src/bot.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ibra-akv/egld-price-discordbot.git"
+  },
+  "keywords": [
+    "discord-bot",
+    "discord-js",
+    "elrond",
+    "egld"
+  ],
+  "author": "Ibragim Abubakarov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ibra-akv/egld-price-discordbot/issues"
+  },
+  "homepage": "https://github.com/ibra-akv/egld-price-discordbot#readme",
+  "dependencies": {
+    "discord.js": "^14.3.0",
+    "dotenv": "^16.0.1",
+    "node-fetch": "^2.6.7"
+  }
+}
