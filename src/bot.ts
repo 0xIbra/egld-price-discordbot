@@ -1,13 +1,17 @@
-import { Client, GatewayIntentBits, PermissionsBitField } from 'discord.js'
+import { Client, IntentsBitField, GatewayIntentBits, SlashCommandBuilder } from 'discord.js'
 import dotenv from 'dotenv'
 import ElrondClient from './api'
 import { Color } from './colors'
+
+// commands
+import InfoCommand from './commands/info';
 
 dotenv.config()
 
 let nickname = 'EGLD Price'
 let lastPrice: any = null
 
+// update price
 setInterval(() => {
     ElrondClient.getCurrentPrice()
         .then(price => {
@@ -20,15 +24,20 @@ setInterval(() => {
         
                 client.guilds.fetch(guildId)
                     .then(guild => {
-                        console.log(`price updated: ${nickname}`)
                         guild.members.me?.setNickname(nickname)
                         // guild.members.me?.roles.color?.setColor('#5AF580')
                         // guild.members.me?.roles.hoist?.setColor('#5AF580')
-                        let role = guild.members.me?.roles.botRole
-                        console.log('role: ', role)
+                        // let role = guild.members.me?.roles.botRole
+                        
+                        let user = client.user
+                        // console.log(user)
 
-                        role?.setColor(Color.GREEN)
-                            .then(updated => console.log('updated: ', updated))
+                        let role = guild.roles.cache.find(role => role.name === "EGLD")
+                        // console.log('role: ', role)
+
+                        // role?.edit({ color: 3066993, permissions: role.permissions })
+                        //     .then(updated => console.log('color updated: ', updated))
+                        //     .catch(e => console.log('error: ' + e))
 
                     })
             }
@@ -36,25 +45,38 @@ setInterval(() => {
 
 }, 5000)
 
+// const client = new Client({
+//     intents: [
+//         GatewayIntentBits.Guilds,
+//         GatewayIntentBits.GuildMembers,
+//         GatewayIntentBits.GuildWebhooks
+//     ]
+// })
 const client = new Client({
     intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMembers
+        IntentsBitField.Flags.Guilds,
+        IntentsBitField.Flags.GuildMembers,
     ]
 })
 
 
-client.on('ready', async () => {
-    console.log('bot online.')
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
 
-    // let guilds = client.guilds.cache.map(guild => guild.id)
-    // for (const key in guilds) {
-    //     const guildId = guilds[key]
-    //     let guild = await client.guilds.fetch(guildId)
-    //     guild.members.me?.setNickname(nickname)
-    // }
+    if (interaction.commandName === 'info') {
+        await interaction.reply(await InfoCommand())
+    }
 })
 
+const infoCommand = new SlashCommandBuilder()
+    .setName('info')
+    .setDescription('Returns general information on the Elrond Blockchain.');
 
 
-client.login(process.env.BOT_TOKEN)
+client.on('ready', async () => {
+    console.log('bot online.');
+
+    await client.application?.commands.create(infoCommand)
+})
+
+client.login(process.env.BOT_TOKEN);
