@@ -4,6 +4,6 @@ export default async function () {
     let data = await ElrondClient.getData();
 
     return `\`\`\`
-${JSON.stringify(data)}
+${JSON.stringify(data, null, '\t')}
 \`\`\``;
 }
